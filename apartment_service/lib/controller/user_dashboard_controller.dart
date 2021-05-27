@@ -3,25 +3,32 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 
 class DashboardData {
+  static List<Color> colorList = [
+    Colors.blueAccent,
+    Colors.orangeAccent,
+    Colors.redAccent,
+    Colors.greenAccent[700],
+  ];
+
   static List<PieChartSectionData> data = [
     PieChartSectionData(
       title: "10",
-      color: Colors.blue,
+      color: Colors.blueAccent,
       value: 10,
     ),
     PieChartSectionData(
       title: "5",
-      color: Colors.orange,
+      color: Colors.orangeAccent,
       value: 5,
     ),
     PieChartSectionData(
       title: "20",
-      color: Colors.red,
+      color: Colors.redAccent,
       value: 20,
     ),
     PieChartSectionData(
       title: "13",
-      color: Colors.green,
+      color: Colors.greenAccent[700],
       value: 13,
     ),
   ];

@@ -1,7 +1,7 @@
 class ServiceRequest {
   int status;
-  DateTime logDate;
-  DateTime endDate;
+  DateTime logDate = DateTime.now();
+  DateTime endDate = DateTime.now();
   String description =
       "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum";
   String title;
@@ -15,7 +15,19 @@ class ServiceRequest {
       ServiceRequest(status: 1, title: "AC not working"),
       ServiceRequest(status: 2, title: "Light replacement"),
       ServiceRequest(status: 3, title: "Light not working"),
+      ServiceRequest(status: 0, title: "AC not working"),
     ];
+    return data;
+  }
+
+  static List<ServiceRequest> allStatusData(int selStatus) {
+    if (-1 == selStatus) {
+      return ServiceRequest.allData();
+    }
+    List<ServiceRequest> data = ServiceRequest.allData()
+        .where((element) => (element.status == selStatus))
+        .toList();
+
     return data;
   }
 }

@@ -1,4 +1,5 @@
 import 'package:apartment_service/controller/user_dashboard_controller.dart';
+import 'package:apartment_service/models/service_request.dart';
 import 'package:apartment_service/widgets/appbar_image.dart';
 import 'package:apartment_service/widgets/indicator.dart';
 import 'package:fl_chart/fl_chart.dart';
@@ -14,6 +15,30 @@ class _UserDashboardState extends State<UserDashboard> {
   int touchedIndex = 0;
   @override
   Widget build(BuildContext context) => Scaffold(
+        appBar: AppBar(
+          automaticallyImplyLeading: false,
+          title: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: <Widget>[
+              CircleAvatar(
+                backgroundImage: AssetImage(
+                  'assets/images/profile.jpg',
+                ),
+              ),
+              Text("Nasu Apartment Service System")
+            ],
+          ),
+          backgroundColor: Colors.indigo[900],
+          centerTitle: true,
+          elevation: 0,
+        ),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            // Add your onPressed code here!
+          },
+          child: const Icon(Icons.add),
+          backgroundColor: Colors.indigo[900],
+        ),
         backgroundColor: Colors.white,
         body: Stack(
           children: [
@@ -21,28 +46,30 @@ class _UserDashboardState extends State<UserDashboard> {
             Positioned(
               bottom: 10,
               child: Container(
-                height: MediaQuery.of(context).size.height / 2 - 20,
+                height: MediaQuery.of(context).size.height / 2 - 95,
                 width: MediaQuery.of(context).size.width,
-                child: buildListView(),
+                child: buildListView(touchedIndex),
               ),
             ),
             Positioned(
-              top: 40,
+              top: 0,
               left: 0,
               right: 0,
               child: Container(
                 margin: EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: Colors.white.withOpacity(0.9),
                   borderRadius: BorderRadius.only(
                     topLeft: Radius.circular(200),
                     topRight: Radius.circular(200),
+                    bottomRight: Radius.circular(20),
+                    bottomLeft: Radius.circular(20),
                   ),
                   boxShadow: [
                     BoxShadow(
                       color: Colors.black.withOpacity(0.3),
-                      blurRadius: 15,
-                      spreadRadius: 5,
+                      blurRadius: 0,
+                      spreadRadius: 0,
                     ),
                   ],
                 ),
@@ -52,7 +79,7 @@ class _UserDashboardState extends State<UserDashboard> {
                   children: [
                     SizedBox(
                       width: MediaQuery.of(context).size.width,
-                      height: MediaQuery.of(context).size.width - 80,
+                      height: MediaQuery.of(context).size.height / 2 - 115,
                       child: PieChart(
                         PieChartData(
                           pieTouchData:
@@ -72,8 +99,8 @@ class _UserDashboardState extends State<UserDashboard> {
                           borderData: FlBorderData(
                             show: false,
                           ),
-                          sectionsSpace: 0,
-                          centerSpaceRadius: 60,
+                          sectionsSpace: 5,
+                          centerSpaceRadius: 40,
                           sections: DashboardData.getSectionData(touchedIndex),
                         ),
                       ),
@@ -88,22 +115,16 @@ class _UserDashboardState extends State<UserDashboard> {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             crossAxisAlignment: CrossAxisAlignment.start,
-                            children: const <Widget>[
+                            children: <Widget>[
                               Indicator(
-                                color: Colors.blue,
+                                color: DashboardData.colorList[0],
                                 text: 'New',
                                 isSquare: true,
                               ),
-                              SizedBox(
-                                width: 4,
-                              ),
                               Indicator(
-                                color: Colors.orange,
+                                color: DashboardData.colorList[1],
                                 text: 'Pending',
                                 isSquare: true,
-                              ),
-                              SizedBox(
-                                height: 4,
                               ),
                             ],
                           ),
@@ -118,27 +139,20 @@ class _UserDashboardState extends State<UserDashboard> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Indicator(
-                                color: Colors.green,
-                                text: 'Success',
-                                isSquare: true,
-                              ),
-                              SizedBox(
-                                height: 4,
-                              ),
-                              Indicator(
-                                color: Colors.red,
+                                color: DashboardData.colorList[2],
                                 text: 'Cancelled',
                                 isSquare: true,
                               ),
-                              SizedBox(
-                                height: 18,
+                              Indicator(
+                                color: DashboardData.colorList[3],
+                                text: 'Success',
+                                isSquare: true,
                               ),
                             ],
                           ),
                         ),
                       ],
                     ),
-                    //Container(child: buildListView()),
                   ],
                 ),
               ),
@@ -147,13 +161,15 @@ class _UserDashboardState extends State<UserDashboard> {
         ),
       );
 
-  ListView buildListView() {
+  ListView buildListView(int selIdx) {
+    List<ServiceRequest> y = ServiceRequest.allStatusData(selIdx);
     return ListView.builder(
-      itemCount: 10,
+      itemCount: y.length,
       itemBuilder: (context, index) {
         return Container(
           margin: EdgeInsets.symmetric(horizontal: 12),
           child: Card(
+            color: Colors.white.withOpacity(0.9),
             child: Padding(
               padding: const EdgeInsets.symmetric(vertical: 10.0),
               child: SizedBox(
@@ -162,20 +178,20 @@ class _UserDashboardState extends State<UserDashboard> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     AspectRatio(
-                      aspectRatio: 1.0,
+                      aspectRatio: 0.1,
                       child: Container(
-                        decoration: const BoxDecoration(color: Colors.pink),
+                        decoration: BoxDecoration(
+                            color: DashboardData.colorList[y[index].status]),
                       ),
                     ),
                     Expanded(
                       child: Padding(
                         padding: const EdgeInsets.fromLTRB(20.0, 0.0, 2.0, 0.0),
                         child: _ArticleDescription(
-                          title: "title",
-                          subtitle: "subtitle",
-                          author: "author",
-                          publishDate: "publishDate",
-                          readDuration: "readDuration",
+                          title: y[index].title,
+                          description: y[index].description,
+                          loggedDate: y[index].logDate.toString(),
+                          rectifiedDate: y[index].endDate.toString(),
                         ),
                       ),
                     )
@@ -194,17 +210,15 @@ class _ArticleDescription extends StatelessWidget {
   const _ArticleDescription({
     Key key,
     this.title,
-    this.subtitle,
-    this.author,
-    this.publishDate,
-    this.readDuration,
+    this.description,
+    this.loggedDate,
+    this.rectifiedDate,
   }) : super(key: key);
 
   final String title;
-  final String subtitle;
-  final String author;
-  final String publishDate;
-  final String readDuration;
+  final String description;
+  final String loggedDate;
+  final String rectifiedDate;
 
   @override
   Widget build(BuildContext context) {
@@ -221,12 +235,13 @@ class _ArticleDescription extends StatelessWidget {
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
                 style: const TextStyle(
+                  fontSize: 16.0,
                   fontWeight: FontWeight.bold,
                 ),
               ),
               const Padding(padding: EdgeInsets.only(bottom: 2.0)),
               Text(
-                subtitle,
+                description,
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
                 style: const TextStyle(
@@ -243,19 +258,43 @@ class _ArticleDescription extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.end,
             children: <Widget>[
-              Text(
-                author,
-                style: const TextStyle(
-                  fontSize: 12.0,
-                  color: Colors.black87,
-                ),
+              Row(
+                children: [
+                  Text(
+                    'Logged Date : ',
+                    style: const TextStyle(
+                      fontSize: 12.0,
+                      color: Colors.black,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  Text(
+                    '$loggedDate',
+                    style: const TextStyle(
+                      fontSize: 12.0,
+                      color: Colors.black54,
+                    ),
+                  ),
+                ],
               ),
-              Text(
-                '$publishDate - $readDuration',
-                style: const TextStyle(
-                  fontSize: 12.0,
-                  color: Colors.black54,
-                ),
+              Row(
+                children: [
+                  Text(
+                    'Rectified Date : ',
+                    style: const TextStyle(
+                      fontSize: 12.0,
+                      color: Colors.black,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  Text(
+                    '$rectifiedDate',
+                    style: const TextStyle(
+                      fontSize: 12.0,
+                      color: Colors.black54,
+                    ),
+                  ),
+                ],
               ),
             ],
           ),
